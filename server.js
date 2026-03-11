@@ -9,6 +9,7 @@ connectDB(); // Only this should connect DB
 
 const app = express();
 app.use(express.json());
+app.use(express.static("public")); // serve frontend
 
 app.use("/api/partners", require("./routes/partnerRoutes"));
 app.listen(process.env.PORT || 5000, () => {

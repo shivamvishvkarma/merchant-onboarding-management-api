@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Merchant Onboarding Dashboard</title>
+</head>
+
+<body>
+
+<h2>Add Partner</h2>
+
+<input id="name" placeholder="Partner Name">
+<input id="pg" placeholder="Payment Gateway">
+<input id="status" placeholder="Status">
+
+<button onclick="addPartner()">Add Partner</button>
+
+<hr>
+
+<h2>Partners List</h2>
+
+<button onclick="getPartners()">Load Partners</button>
+
+<ul id="partners"></ul>
+
+<script>
+
+async function addPartner() {
+
+  const partnerName = document.getElementById("name").value
+  const bankPG = document.getElementById("pg").value
+  const status = document.getElementById("status").value
+
+  const res = await fetch("/api/partners", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      partnerName,
+      bankPG,
+      status
+    })
+  })
+
+  const data = await res.json()
+
+  alert("Partner Added")
+
+}
+
+async function getPartners(){
+
+  const res = await fetch("/api/partners")
+  const partners = await res.json()
+
+  const list = document.getElementById("partners")
+  list.innerHTML = ""
+
+  partners.forEach(p => {
+
+    const li = document.createElement("li")
+
+    li.innerHTML =
+      p.partnerName + " | " +
+      p.bankPG + " | " +
+      p.status +
+      ` <button onclick="deletePartner('${p._id}')">Delete</button>`
+
+    list.appendChild(li)
+
+  })
+
+}
+
+async function deletePartner(id){
+
+  await fetch("/api/partners/" + id,{
+    method:"DELETE"
+  })
+
+  getPartners()
+
+}
+
+</script>
+
+</body>
+</html>
